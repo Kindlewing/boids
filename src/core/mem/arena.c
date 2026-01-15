@@ -32,12 +32,7 @@ arena *arena_create(u64 capacity) {
 }
 
 void *arena_alloc(arena *arena, u64 size) {
-    if(arena->offset + size >= arena->capacity) {
-        return NULL;
-    }
-    void *ptr = &arena->memory[arena->offset];
-    arena->offset += size;
-    return ptr;
+    return arena_alloc_aligned(arena, size, DEFAULT_ALIGNMENT);
 }
 
 void *arena_alloc_aligned(arena *arena, u64 size, size_t align) {
