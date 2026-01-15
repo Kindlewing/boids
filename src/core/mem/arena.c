@@ -9,10 +9,10 @@ static inline bool is_power_of_two(uintptr_t x) {
 }
 
 static uintptr_t align_forward(uintptr_t ptr, size_t align) {
-    uintptr_t p, a, modulo;
-
+    uintptr_t p = ptr;
+    uintptr_t a;
+    uintptr_t modulo;
     assert(is_power_of_two(align));
-
     p = ptr;
     a = (uintptr_t)align;
     modulo = p & (a - 1);
@@ -37,6 +37,7 @@ void *arena_alloc(arena *arena, u64 size) {
 
 void *arena_alloc_aligned(arena *arena, u64 size, size_t align) {
     uintptr_t aligned_ptr = (uintptr_t)arena->memory + (uintptr_t)arena->offset;
+
     uintptr_t aligned_offset = align_forward(aligned_ptr, align);
     u64 padding = (u64)(aligned_offset - aligned_ptr);
     if(arena->offset + padding + size > arena->capacity) {
