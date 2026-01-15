@@ -1,0 +1,40 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-O2",
+      "-Iinclude",
+      "-Ivendor",
+      "-c",
+      "-o",
+      "build/platform/x11.o",
+      "src/platform/x11.c"
+    ],
+    "directory": "/home/hudson/development/c/boids",
+    "file": "/home/hudson/development/c/boids/src/platform/x11.c",
+    "output": "/home/hudson/development/c/boids/build/platform/x11.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-O2",
+      "-Iinclude",
+      "-Ivendor",
+      "-c",
+      "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/hudson/development/c/boids",
+    "file": "/home/hudson/development/c/boids/src/main.c",
+    "output": "/home/hudson/development/c/boids/build/main.o"
+  }
+]
