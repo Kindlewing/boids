@@ -40,10 +40,15 @@ int main(void) {
     XMapWindow(display, window);
     XStoreName(display, window, "GUI");
     printf("About to get GLX context\n");
-    GLXFBConfig fb = x11_glx_choose_config(display, 1);
+    GLXFBConfig fb = x11_glx_choose_config(display, DefaultScreen(display));
     gl_context = x11_create_core_context(display, fb);
 
     glXMakeContextCurrent(display, window, window, gl_context);
+    if(glXGetCurrentContext() != gl_context) {
+        fprintf(stderr, "Failed to make OpenGL context current\n");
+        exit(1);
+    }
+
     glEnable(GL_DEPTH_TEST);
 
     bool window_should_close = false;
@@ -62,7 +67,5 @@ int main(void) {
     glXDestroyContext(display, gl_context);
     XDestroyWindow(display, window);
     XCloseDisplay(display);
-    return EXIT_SUCCESS;
-
     return 0;
 }
