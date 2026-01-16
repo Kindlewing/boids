@@ -15,9 +15,7 @@ DEPS := $(OBJS:.o=.d)
 CFLAGS := \
   -std=$(CSTD) \
   -Wall -Wextra -Wpedantic \
-  -O2 \
   -I$(INC_DIR) \
-  -I$(VEND_DIR) \
   -MMD -MP
 
 
