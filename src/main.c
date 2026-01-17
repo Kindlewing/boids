@@ -1,42 +1,24 @@
-#include <GL/glx.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "typedefs.h"
-#include "x11.h"
+#include "platform.h"
+#include <GL/gl.h>
+#include <stdbool.h>
 
 int main(void) {
-    GLXContext gl_context = {0};
-    XWindowAttributes window_attribs = {0};
-    XEvent xevent = {0};
+	arena *engine_arena = arena_create(1024 * 1024);
+	platform_init();
+	platform_window *win = platform_create_window(engine_arena, 800, 800, "GUI");
 
-    x11_init();
-    printf("About to get GLX context\n");
-    GLXFBConfig fb = x11_glx_choose_config(display, DefaultScreen(display));
-    gl_context = x11_create_core_context(display, fb);
+	glEnable(GL_DEPTH_TEST);
 
-    glXMakeContextCurrent(display, window, window, gl_context);
-    if(glXGetCurrentContext() != gl_context) {
-        fprintf(stderr, "Failed to make OpenGL context current\n");
-        exit(1);
-    }
+	bool should_close = false;
+	while(!should_close) {
+		platform_poll_events(win, &should_close);
 
-    glEnable(GL_DEPTH_TEST);
+		glClearColor(0.117f, 0.117f, 0.180f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    bool window_should_close = false;
-    while(!window_should_close) {
-        XNextEvent(display, &xevent);
-        if(xevent.type == KeyPress) {
-            window_should_close = true;
-        }
-        XGetWindowAttributes(display, window, &window_attribs);
-        glClearColor(30.0 / 255.0, 30.0 / 255.0, 46.0 / 255.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, window_attribs.width, window_attribs.height);
-        glXSwapBuffers(display, window);
-    }
-    glXMakeCurrent(display, None, NULL);
-    glXDestroyContext(display, gl_context);
-    XDestroyWindow(display, window);
-    XCloseDisplay(display);
-    return 0;
+		platform_swap_buffers(win);
+	}
+	platform_destroy_window(win);
+	arena_free(engine_arena);
+	return 0;
 }
