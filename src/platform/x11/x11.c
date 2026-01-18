@@ -55,69 +55,6 @@ static GLXContext create_core_context(Display *dpy, GLXFBConfig fb) {
 	return ctx;
 }
 
-bool platform_init(void) {
-	Display *dpy = XOpenDisplay(NULL);
-	if(!dpy) {
-		fprintf(stderr, "Platform init: Failed to open X display\n");
-		return false;
-	}
-
-	// 2️⃣ Pick default screen
-	int screen = DefaultScreen(dpy);
-
-	// 3️⃣ Check for a suitable GLX visual
-	int visual_attribs[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
-	XVisualInfo *vi = glXChooseVisual(dpy, screen, visual_attribs);
-	if(!vi) {
-		fprintf(stderr, "Platform init: No suitable GLX visual found\n");
-		XCloseDisplay(dpy);
-		return false;
-	}
-
-	// 4️⃣ Check framebuffer config availability
-	int fb_attribs[] = {
-	    GLX_X_RENDERABLE, True,
-	    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
-	    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-	    GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
-	    GLX_RED_SIZE, 8,
-	    GLX_GREEN_SIZE, 8,
-	    GLX_BLUE_SIZE, 8,
-	    GLX_ALPHA_SIZE, 8,
-	    GLX_DEPTH_SIZE, 24,
-	    GLX_STENCIL_SIZE, 8,
-	    GLX_DOUBLEBUFFER, True,
-	    None};
-	int fb_count = 0;
-	GLXFBConfig *fb_configs = glXChooseFBConfig(dpy, screen, fb_attribs, &fb_count);
-	if(!fb_configs || fb_count == 0) {
-		fprintf(stderr, "Platform init: No suitable GLX framebuffer config\n");
-		if(fb_configs)
-			XFree(fb_configs);
-		XFree(vi);
-		XCloseDisplay(dpy);
-		return false;
-	}
-	XFree(fb_configs);
-	XFree(vi);
-
-	// 5️⃣ Optional: check OpenGL 4.6 context creation
-	PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB =
-	    (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
-	        (const GLubyte *)"glXCreateContextAttribsARB");
-
-	if(!glXCreateContextAttribsARB) {
-		fprintf(stderr, "Platform init: GLX_ARB_create_context not supported\n");
-		XCloseDisplay(dpy);
-		return false;
-	}
-
-	// 6️⃣ Close display, this is just preflight
-	XCloseDisplay(dpy);
-
-	return true; // Everything looks good
-}
-
 platform_window *platform_create_window(arena *a, int w, int h, const char *title) {
 	assert(a && "Arena must not be NULL");
 
@@ -128,11 +65,9 @@ platform_window *platform_create_window(arena *a, int w, int h, const char *titl
 	assert(win->dpy && "Failed to open X display");
 
 	Window root = DefaultRootWindow(win->dpy);
-
 	GLXFBConfig fb = choose_fbconfig(win->dpy, DefaultScreen(win->dpy));
-	XVisualInfo *vi = glXChooseVisual(win->dpy, 0,
-	                                  (int[]){GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None});
-
+	XVisualInfo *vi = glXGetVisualFromFBConfig(win->dpy, fb);
+	assert(vi && "Failed to get XVisualInfo from FBConfig");
 	XSetWindowAttributes attr = {0};
 	attr.colormap = XCreateColormap(win->dpy, root, vi->visual, AllocNone);
 	attr.event_mask = ExposureMask | KeyPressMask;

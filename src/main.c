@@ -4,9 +4,8 @@
 
 int main(void) {
 	arena *engine_arena = arena_create(1024 * 1024);
-	platform_init();
 	platform_window *win = platform_create_window(engine_arena, 800, 800, "GUI");
-	
+
 	glEnable(GL_DEPTH_TEST);
 
 	bool should_close = false;
@@ -19,7 +18,7 @@ int main(void) {
 
 		platform_swap_buffers(win);
 	}
-	platform_destroy_window(win);
+	platform_close_window(win);
 	arena_free(engine_arena);
 	return 0;
 }
