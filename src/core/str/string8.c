@@ -4,21 +4,22 @@ string8 string8_lit(char *str) {
 	string8 s;
 	s.data = (u8 *)str;
 	s.length = 0;
-
 	while(str[s.length] != 0) {
 		s.length++;
 	}
-
 	return s;
 }
 
-string8 *string8_from(arena *a, char *cstring) {
-	string8 s = {0};
-	size_t len = 0;
-	while(cstring[len] != '\0') {
-		s.data[len] = cstring[len];
-		len += 1;
+string8 string8_make(arena *a, char *cstring) {
+	string8 s;
+	s.length = 0;
+	while(cstring[s.length]) {
+		s.length++;
 	}
-	s.length = len;
+
+	s.data = arena_push_array(a, u8, s.length);
+	for(size_t i = 0; i < s.length; i++) {
+		s.data[i] = (u8)cstring[i];
+	}
 	return s;
 }

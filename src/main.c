@@ -8,8 +8,9 @@ int main(void) {
 
 	glEnable(GL_DEPTH_TEST);
 
-	bool should_close = false;
+	// DO OPENGL STUFF
 
+	bool should_close = false;
 	while(!should_close) {
 		platform_poll_events(win, &should_close);
 

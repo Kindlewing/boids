@@ -26,9 +26,9 @@ void *arena_push_aligned(arena *arena, u64 size, size_t align);
 void *arena_push_zero(arena *arena, u64 size);
 
 #define arena_push_struct(a, type) \
-	((type *)arena_push_aligned((a), sizeof(type), _Alignof(type)))
+	((type *)arena_push_aligned((a), sizeof(type), DEFAULT_ALIGNMENT))
 
 #define arena_push_array(a, type, count) \
-	((type *)arena_push_aligned((a), sizeof(type) * (count), _Alignof(type)))
+	((type *)arena_push_aligned((a), sizeof(type) * (count), DEFAULT_ALIGNMENT))
 
 #endif // ARENA_H

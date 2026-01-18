@@ -58,7 +58,7 @@ static GLXContext create_core_context(Display *dpy, GLXFBConfig fb) {
 platform_window *platform_create_window(arena *a, int w, int h, const char *title) {
 	assert(a && "Arena must not be NULL");
 
-	platform_window *win = arena_alloc(a, sizeof(*win));
+	platform_window *win = arena_push(a, sizeof(*win));
 	assert(win && "Failed to allocate platform_window");
 
 	win->dpy = XOpenDisplay(NULL);
@@ -97,7 +97,7 @@ void platform_swap_buffers(platform_window *win) {
 	glXSwapBuffers(win->dpy, win->win);
 }
 
-void platform_destroy_window(platform_window *win) {
+void platform_close_window(platform_window *win) {
 	glXMakeCurrent(win->dpy, None, NULL);
 	glXDestroyContext(win->dpy, win->gl_context);
 	XDestroyWindow(win->dpy, win->win);

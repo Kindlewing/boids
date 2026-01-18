@@ -41,9 +41,8 @@ void *arena_push_aligned(arena *arena, u64 size, size_t align) {
 	u64 padding = (u64)(aligned_ptr - ptr);
 
 	if(arena->offset + padding + size > arena->capacity) {
-		return NULL; // out of memory
+		return NULL;
 	}
-
 	void *result = (void *)aligned_ptr;
 	arena->offset += padding + size;
 	return result;

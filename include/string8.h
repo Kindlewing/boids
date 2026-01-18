@@ -11,6 +11,6 @@ typedef struct {
 } string8;
 
 string8 string8_lit(char *str);
-string8 *string8_from(arena *a, char *cstring);
+string8 string8_make(arena *a, char *cstring);
 
 #endif // STRING8_H
