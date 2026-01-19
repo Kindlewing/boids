@@ -3,7 +3,7 @@
 #define ARENA_H
 
 #include "types.h"
-#include <stddef.h>
+#include <assert.h>
 #include <sys/mman.h>
 #include <unistd.h>
 

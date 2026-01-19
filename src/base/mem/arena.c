@@ -1,23 +1,14 @@
 #include "arena.h"
-#include <assert.h>
+#include "macros.h"
 
-static inline bool is_power_of_two(uintptr_t x) {
-	return (x & (x - 1)) == 0;
+static inline bool is_power_of_two(usize x) {
+	return x && ((x & (x - 1)) == 0);
 }
 
-static uintptr_t align_forward(uintptr_t ptr, size_t align) {
-	uintptr_t p = ptr;
-	uintptr_t a;
-	uintptr_t modulo;
+static inline usize align_forward_usize(usize offset, usize align) {
 	assert(is_power_of_two(align));
-	p = ptr;
-	a = (uintptr_t)align;
-	modulo = p & (a - 1);
-
-	if(modulo != 0) {
-		p += a - modulo;
-	}
-	return p;
+	usize mask = align - 1;
+	return (offset + mask) & ~mask;
 }
 
 arena *arena_create(u64 capacity) {
@@ -36,15 +27,13 @@ void *arena_push(arena *arena, u64 size) {
 }
 
 void *arena_push_aligned(arena *arena, u64 size, size_t align) {
-	uintptr_t ptr = (uintptr_t)arena->base + arena->offset;
-	uintptr_t aligned_ptr = align_forward(ptr, align);
-	u64 padding = (u64)(aligned_ptr - ptr);
+	usize aligned_offset = align_forward_usize(arena->offset, align);
 
-	if(arena->offset + padding + size > arena->capacity) {
+	if(aligned_offset + size > arena->capacity) {
 		return NULL;
 	}
-	void *result = (void *)aligned_ptr;
-	arena->offset += padding + size;
+	void *result = arena->base + aligned_offset;
+	arena->offset = aligned_offset + size;
 	return result;
 }
 
