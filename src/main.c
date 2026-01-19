@@ -1,6 +1,5 @@
 #include "platform.h"
 #include <GL/gl.h>
-#include <stdbool.h>
 
 int main(void) {
 	arena *engine_arena = arena_create(1024 * 1024);

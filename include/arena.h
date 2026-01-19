@@ -2,7 +2,7 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-#include "typedefs.h"
+#include "types.h"
 #include <stddef.h>
 #include <sys/mman.h>
 #include <unistd.h>

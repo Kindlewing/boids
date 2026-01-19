@@ -2,10 +2,11 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 struct platform_window {
+	platform_state state;
+
 	Display *dpy;
 	Window win;
 	GLXContext gl_context;
