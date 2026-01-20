@@ -1,8 +1,8 @@
-#include "platform.h"
-#include <GL/glx.h>
+#include "platform/platform.h"
 #include <X11/Xlib.h>
 #include <assert.h>
-#include <stdlib.h>
+#include <GL/glx.h>
+#include <stdio.h>
 
 struct platform_window {
 	platform_state state;
@@ -69,6 +69,7 @@ platform_window *platform_create_window(arena *a, int w, int h, const char *titl
 	GLXFBConfig fb = choose_fbconfig(win->dpy, DefaultScreen(win->dpy));
 	XVisualInfo *vi = glXGetVisualFromFBConfig(win->dpy, fb);
 	assert(vi && "Failed to get XVisualInfo from FBConfig");
+
 	XSetWindowAttributes attr = {0};
 	attr.colormap = XCreateColormap(win->dpy, root, vi->visual, AllocNone);
 	attr.event_mask = ExposureMask | KeyPressMask;
@@ -79,13 +80,25 @@ platform_window *platform_create_window(arena *a, int w, int h, const char *titl
 	XMapWindow(win->dpy, win->win);
 	XStoreName(win->dpy, win->win, title);
 
+	// Create the OpenGL context
 	win->gl_context = create_core_context(win->dpy, fb);
 	glXMakeCurrent(win->dpy, win->win, win->gl_context);
 
+	// --- Initialize GLAD here ---
+	// cast glXGetProcAddressARB to GLADloadproc
+	if(!gladLoadGL((GLADloadfunc)glXGetProcAddressARB)) {
+		fprintf(stderr, "Failed to initialize GLAD\n");
+		platform_close_window(win);
+		return NULL;
+	}
+	i32 major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
+	printf("OpenGL %d.%d loaded\n", major, minor);
 	return win;
 }
 
-void platform_poll_events(platform_window *win, bool *should_close) {
+void platform_poll_events(platform_window *win, b8 *should_close) {
 	XEvent event;
 	while(XPending(win->dpy)) {
 		XNextEvent(win->dpy, &event);

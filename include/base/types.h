@@ -8,6 +8,9 @@
 	typedef char static_assert_##name[(cond) ? 1 : -1]
 
 /* Integer widths */
+STATIC_ASSERT(sizeof(b8) == 1, b8_must_be_8_bits);
+STATIC_ASSERT(sizeof(b16) == 2, b16_must_be_16_bits);
+STATIC_ASSERT(sizeof(b32) == 4, b32_must_be_32_bits);
 STATIC_ASSERT(sizeof(u8) == 1, u8_must_be_8_bits);
 STATIC_ASSERT(sizeof(u16) == 2, u16_must_be_16_bits);
 STATIC_ASSERT(sizeof(u32) == 4, u32_must_be_32_bits);

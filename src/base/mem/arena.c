@@ -1,7 +1,7 @@
-#include "arena.h"
-#include "macros.h"
+#include "base/arena.h"
+#include "base/macros.h"
 
-static inline bool is_power_of_two(usize x) {
+static inline b8 is_power_of_two(usize x) {
 	return x && ((x & (x - 1)) == 0);
 }
 

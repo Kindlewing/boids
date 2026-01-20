@@ -5,6 +5,7 @@ UseTab: ForIndentation
 TabWidth: 4
 IndentWidth: 4
 ContinuationIndentWidth: 4
+SortIncludes: false
 
 # Brace style
 BreakBeforeBraces: Attach

@@ -1,10 +1,8 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
-typedef enum {
-	true = 1,
-	false = 0
-} bool;
+#define true ((b8)1)
+#define false ((b8)0)
 
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -21,5 +19,9 @@ typedef double f64;
 
 typedef unsigned long long usize;
 typedef signed long long isize;
+
+typedef u8 b8;
+typedef u16 b16;
+typedef u32 b32;
 
 #endif // TYPEDEFS_H
