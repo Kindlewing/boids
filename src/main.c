@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <GL/gl.h>
 
-#define WINDOW_W 800
-#define WINDOW_H 600
+#define WINDOW_W 1200
+#define WINDOW_H 1200
 
 int main(void) {
 	arena* a = arena_create(1024 * 1024); // 1 MB arena

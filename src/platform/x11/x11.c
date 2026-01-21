@@ -2,6 +2,7 @@
 #include "platform/platform.h"
 #include <GL/glx.h>
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <assert.h>
 #include <stdio.h>
 #include <third_party/glad/gl.h>
@@ -83,25 +84,30 @@ static GLXContext create_core_context(Display* dpy, GLXFBConfig fb) {
 
 platform_window* platform_create_window(arena* a, u32 w, u32 h, string8 title) {
 	assert(a && "Arena must not be NULL");
-
 	platform_window* win = arena_push(a, sizeof(*win));
 	assert(win && "Failed to allocate platform_window");
 
+	// Open X display
 	win->dpy = XOpenDisplay(NULL);
 	assert(win->dpy && "Failed to open X display");
-
 	Window root = DefaultRootWindow(win->dpy);
 	assert(root && "Failed to get default root window");
 
+	// Choose FBConfig & Visual
 	GLXFBConfig fb = choose_fbconfig(win->dpy, DefaultScreen(win->dpy));
 	XVisualInfo* vi = glXGetVisualFromFBConfig(win->dpy, fb);
 	assert(vi && "Failed to get XVisualInfo from FBConfig");
 
+	// Create colormap
 	XSetWindowAttributes attr = {0};
 	attr.colormap = XCreateColormap(win->dpy, root, vi->visual, AllocNone);
 	assert(attr.colormap && "Failed to create colormap");
 	attr.event_mask = ExposureMask | KeyPressMask;
 
+	// Set override_redirect if you want borderless / floating window
+	// attr.override_redirect = True;
+
+	// Create X window
 	win->win = XCreateWindow(win->dpy,
 	 root,
 	 0,
@@ -116,15 +122,54 @@ platform_window* platform_create_window(arena* a, u32 w, u32 h, string8 title) {
 	 &attr);
 	assert(win->win && "Failed to create X window");
 
-	XMapWindow(win->dpy, win->win);
+	// --- Set size hints (force requested size) ---
+	XSizeHints* size_hints = XAllocSizeHints();
+	size_hints->flags = PSize | PMinSize | PMaxSize;
+	size_hints->width = w;
+	size_hints->height = h;
+	size_hints->min_width = w;
+	size_hints->min_height = h;
+	size_hints->max_width = w;
+	size_hints->max_height = h;
+	XSetWMNormalHints(win->dpy, win->win, size_hints);
+	XFree(size_hints);
+
+	// --- Set window type to NORMAL ---
+	Atom window_type = XInternAtom(win->dpy, "_NET_WM_WINDOW_TYPE", False);
+	Atom normal_type = XInternAtom(win->dpy, "_NET_WM_WINDOW_TYPE_NORMAL", False);
+	XChangeProperty(win->dpy,
+	 win->win,
+	 window_type,
+	 XA_ATOM,
+	 32,
+	 PropModeReplace,
+	 (unsigned char*)&normal_type,
+	 1);
+
+	// Set window title
 	XStoreName(win->dpy, win->win, (const char*)title.data);
+
+	// Map window
+	XMapWindow(win->dpy, win->win);
 	XFlush(win->dpy);
 
-	// Create the OpenGL context
+	// Wait for MapNotify to ensure the window is actually mapped
+	XMapWindow(win->dpy, win->win);
+	XFlush(win->dpy);
+	// --- Create OpenGL context ---
 	win->gl_context = create_core_context(win->dpy, fb);
 	assert(win->gl_context && "Failed to create GL context");
 	glXMakeCurrent(win->dpy, win->win, win->gl_context);
 
+	// --- Initialize GLAD ---
+	assert(gladLoadGL((GLADloadfunc)glXGetProcAddressARB) && "Failed to initialize GLAD");
+
+	i32 major = 0, minor = 0;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
+	printf("OpenGL %d.%d loaded\n", major, minor);
+
+	// Window & framebuffer sizes
 	win->window_w = w;
 	win->window_h = h;
 
@@ -136,15 +181,8 @@ platform_window* platform_create_window(arena* a, u32 w, u32 h, string8 title) {
 	win->fb_w = (i32)fb_w;
 	win->fb_h = (i32)fb_h;
 
+	// Set viewport
 	glViewport(0, 0, win->fb_w, win->fb_h);
-
-	// --- Initialize GLAD ---
-	assert(gladLoadGL((GLADloadfunc)glXGetProcAddressARB) && "Failed to initialize GLAD");
-
-	i32 major = 0, minor = 0;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
-	printf("OpenGL %d.%d loaded\n", major, minor);
 
 	return win;
 }
