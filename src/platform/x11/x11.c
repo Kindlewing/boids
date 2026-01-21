@@ -1,25 +1,29 @@
+#include "base/typedefs.h"
 #include "platform/platform.h"
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <third_party/glad/gl.h>
 
 struct platform_window {
 	platform_state state;
 
-	int window_w;
-	int window_h;
+	i32 window_w;
+	i32 window_h;
 
-	int fb_w;
-	int fb_h;
+	i32 fb_w;
+	i32 fb_h;
 
 	Display* dpy;
 	Window win;
 	GLXContext gl_context;
 };
 
-static GLXFBConfig choose_fbconfig(Display* dpy, int screen) {
-	int attribs[] = {GLX_X_RENDERABLE,
+static GLXFBConfig choose_fbconfig(Display* dpy, i32 screen) {
+	assert(dpy && "Display must not be NULL");
+
+	i32 attribs[] = {GLX_X_RENDERABLE,
 	 True,
 	 GLX_DRAWABLE_TYPE,
 	 GLX_WINDOW_BIT,
@@ -43,22 +47,24 @@ static GLXFBConfig choose_fbconfig(Display* dpy, int screen) {
 	 True,
 	 None};
 
-	int count;
+	i32 count = 0;
 	GLXFBConfig* configs = glXChooseFBConfig(dpy, screen, attribs, &count);
-	assert(configs && count > 0);
+	assert(configs && count > 0 && "No valid FBConfig found");
+
 	GLXFBConfig fb = configs[0];
 	XFree(configs);
 	return fb;
 }
 
 static GLXContext create_core_context(Display* dpy, GLXFBConfig fb) {
+	assert(dpy && "Display must not be NULL");
+
 	PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB =
 	 (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
 	  (const GLubyte*)"glXCreateContextAttribsARB");
-
 	assert(glXCreateContextAttribsARB && "GLX_ARB_create_context not supported");
 
-	int attribs[] = {GLX_CONTEXT_MAJOR_VERSION_ARB,
+	i32 attribs[] = {GLX_CONTEXT_MAJOR_VERSION_ARB,
 	 4,
 	 GLX_CONTEXT_MINOR_VERSION_ARB,
 	 6,
@@ -75,7 +81,7 @@ static GLXContext create_core_context(Display* dpy, GLXFBConfig fb) {
 	return ctx;
 }
 
-platform_window* platform_create_window(arena* a, int w, int h, const char* title) {
+platform_window* platform_create_window(arena* a, u32 w, u32 h, string8 title) {
 	assert(a && "Arena must not be NULL");
 
 	platform_window* win = arena_push(a, sizeof(*win));
@@ -85,12 +91,15 @@ platform_window* platform_create_window(arena* a, int w, int h, const char* titl
 	assert(win->dpy && "Failed to open X display");
 
 	Window root = DefaultRootWindow(win->dpy);
+	assert(root && "Failed to get default root window");
+
 	GLXFBConfig fb = choose_fbconfig(win->dpy, DefaultScreen(win->dpy));
 	XVisualInfo* vi = glXGetVisualFromFBConfig(win->dpy, fb);
 	assert(vi && "Failed to get XVisualInfo from FBConfig");
 
 	XSetWindowAttributes attr = {0};
 	attr.colormap = XCreateColormap(win->dpy, root, vi->visual, AllocNone);
+	assert(attr.colormap && "Failed to create colormap");
 	attr.event_mask = ExposureMask | KeyPressMask;
 
 	win->win = XCreateWindow(win->dpy,
@@ -105,41 +114,46 @@ platform_window* platform_create_window(arena* a, int w, int h, const char* titl
 	 vi->visual,
 	 CWColormap | CWEventMask,
 	 &attr);
+	assert(win->win && "Failed to create X window");
 
 	XMapWindow(win->dpy, win->win);
-	XStoreName(win->dpy, win->win, title);
+	XStoreName(win->dpy, win->win, (const char*)title.data);
+	XFlush(win->dpy);
 
 	// Create the OpenGL context
 	win->gl_context = create_core_context(win->dpy, fb);
+	assert(win->gl_context && "Failed to create GL context");
 	glXMakeCurrent(win->dpy, win->win, win->gl_context);
 
 	win->window_w = w;
 	win->window_h = h;
 
-	unsigned int fb_w, fb_h;
+	u32 fb_w = 0, fb_h = 0;
 	glXQueryDrawable(win->dpy, win->win, GLX_WIDTH, &fb_w);
 	glXQueryDrawable(win->dpy, win->win, GLX_HEIGHT, &fb_h);
+	assert(fb_w > 0 && fb_h > 0 && "Framebuffer width/height invalid");
 
-	win->fb_w = (int)fb_w;
-	win->fb_h = (int)fb_h;
+	win->fb_w = (i32)fb_w;
+	win->fb_h = (i32)fb_h;
 
 	glViewport(0, 0, win->fb_w, win->fb_h);
 
-	// --- Initialize GLAD here ---
-	// cast glXGetProcAddressARB to GLADloadproc
-	if(!gladLoadGL((GLADloadfunc)glXGetProcAddressARB)) {
-		fprintf(stderr, "Failed to initialize GLAD\n");
-		platform_close_window(win);
-		return NULL;
-	}
-	i32 major, minor;
+	// --- Initialize GLAD ---
+	assert(gladLoadGL((GLADloadfunc)glXGetProcAddressARB) && "Failed to initialize GLAD");
+
+	i32 major = 0, minor = 0;
 	glGetIntegerv(GL_MAJOR_VERSION, &major);
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 	printf("OpenGL %d.%d loaded\n", major, minor);
+
 	return win;
 }
 
 void platform_poll_events(platform_window* win, b8* should_close) {
+	assert(win && "platform_window is NULL");
+	assert(win->dpy && "Display is NULL");
+	assert(should_close && "should_close pointer is NULL");
+
 	XEvent event;
 	while(XPending(win->dpy)) {
 		XNextEvent(win->dpy, &event);
@@ -149,12 +163,23 @@ void platform_poll_events(platform_window* win, b8* should_close) {
 }
 
 void platform_swap_buffers(platform_window* win) {
+	assert(win && "platform_window is NULL");
+	assert(win->dpy && "Display is NULL");
+	assert(win->win && "Window is NULL");
+
 	glXSwapBuffers(win->dpy, win->win);
 }
 
 void platform_close_window(platform_window* win) {
-	glXMakeCurrent(win->dpy, None, NULL);
-	glXDestroyContext(win->dpy, win->gl_context);
-	XDestroyWindow(win->dpy, win->win);
-	XCloseDisplay(win->dpy);
+	if(!win)
+		return;
+	if(win->dpy) {
+		if(win->gl_context)
+			glXMakeCurrent(win->dpy, None, NULL);
+		if(win->gl_context)
+			glXDestroyContext(win->dpy, win->gl_context);
+		if(win->win)
+			XDestroyWindow(win->dpy, win->win);
+		XCloseDisplay(win->dpy);
+	}
 }
