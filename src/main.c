@@ -3,9 +3,12 @@
 #include "platform/platform.h"
 #include "engine/shader.h"
 
+#define WINDOW_W 800
+#define WINDOW_H 600
+
 int main(void) {
 	arena* a = arena_create(1024 * 1024); // 1 MB arena
-	platform_window* win = platform_create_window(a, 800, 600, "Triangle with EBO");
+	platform_window* win = platform_create_window(a, WINDOW_W, WINDOW_H, "Triangle with EBO");
 	shader s = {0};
 	string8 vertex_file_path = string8_lit("assets/shaders/vertex.glsl");
 	string8 fragment_file_path = string8_lit("assets/shaders/fragment.glsl");
@@ -14,6 +17,8 @@ int main(void) {
 	glAttachShader(s.id, s.fragment_id);
 	glLinkProgram(s.id);
 	glUseProgram(s.id);
+
+	glViewport(0, 0, WINDOW_W, WINDOW_H);
 	
 	// clang-format off
 	f32 vertices[] = {
