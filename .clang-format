@@ -1,11 +1,15 @@
----
 Language: C
 
-# Tabs
 UseTab: ForIndentation
 TabWidth: 4
 IndentWidth: 4
-ContinuationIndentWidth: 4
+ContinuationIndentWidth: 1
+
+BinPackArguments: false
+BinPackParameters: false
+AllowAllArgumentsOnNextLine: true
+
+AlignAfterOpenBracket: DontAlign
 
 # Line length
 ColumnLimit: 90
@@ -13,45 +17,40 @@ ColumnLimit: 90
 # Braces
 BreakBeforeBraces: Attach
 
-# Whitespace
-SpaceBeforeParens: Never
-SpacesInParentheses: false
-SpaceInBraces: false
-SpacesInSquareBrackets: false
-SpaceBeforeAssignmentOperators: true
+# Spaces
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: false
+  AfterFunctionDeclarationName: false
+  AfterFunctionDefinitionName: false
+  AfterForeachMacros: false
+  AfterIfMacros: false
+  AfterNot: false
+  AfterOverloadedOperator: false
+  AfterPlacementOperator: false
+  AfterRequiresInClause: false
+  AfterRequiresInExpression: false
+  BeforeNonEmptyParentheses: false
 
 # Function calls / params
-BinPackArguments: true
-BinPackParameters: true
-AllowAllArgumentsOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
 
-# Short forms
-AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: Never
-AllowShortLoopsOnASingleLine: false
-AllowShortBlocksOnASingleLine: Always
-AllowShortCaseLabelsOnASingleLine: true
-
-# Alignment – IMPORTANT for tabs
-AlignAfterOpenBracket: Align
+# Alignment
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignOperands: false
 AlignTrailingComments: false
 
-# Line breaking preference
-BreakBeforeBinaryOperators: None
-PenaltyBreakAssignment: 1
-PenaltyBreakBeforeFirstCallParameter: 1
-AllowShortCallExpressionsOnASingleLine: All
-AlignAfterOpenBracket: DontAlign
-
-# Comments
-ReflowComments: false
+# Short forms
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+IndentCaseLabels: true
 
 # Includes
-SortIncludes: false
+SortIncludes: Never
 IncludeBlocks: Preserve
 
 # Preprocessor
@@ -60,4 +59,6 @@ IndentPPDirectives: None
 # Pointers
 PointerAlignment: Left
 DerivePointerAlignment: false
-...
+
+# Comments
+ReflowComments: false
