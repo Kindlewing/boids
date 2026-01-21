@@ -4,8 +4,8 @@
 #include "typedefs.h"
 
 /* Compile-time assert */
-#define STATIC_ASSERT(cond, name) \
-	typedef char static_assert_##name[(cond) ? 1 : -1]
+#define STATIC_ASSERT(cond, name)                                             \
+    typedef char static_assert_##name[(cond) ? 1 : -1]
 
 /* Integer widths */
 STATIC_ASSERT(sizeof(b8) == 1, b8_must_be_8_bits);
