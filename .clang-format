@@ -1,64 +1,28 @@
 Language: C
-
-UseTab: ForIndentation
-TabWidth: 4
+BasedOnStyle: GNU
+UseTab: Always
 IndentWidth: 4
-ContinuationIndentWidth: 1
-
-BinPackArguments: false
-BinPackParameters: false
-AllowAllArgumentsOnNextLine: true
-
-AlignAfterOpenBracket: DontAlign
-
-# Line length
-ColumnLimit: 90
-
-# Braces
-BreakBeforeBraces: Attach
-
-# Spaces
-SpaceBeforeParens: Custom
-SpaceBeforeParensOptions:
-  AfterControlStatements: false
-  AfterFunctionDeclarationName: false
-  AfterFunctionDefinitionName: false
-  AfterForeachMacros: false
-  AfterIfMacros: false
-  AfterNot: false
-  AfterOverloadedOperator: false
-  AfterPlacementOperator: false
-  AfterRequiresInClause: false
-  AfterRequiresInExpression: false
-  BeforeNonEmptyParentheses: false
-
-# Function calls / params
-AllowAllParametersOfDeclarationOnNextLine: true
-
-# Alignment
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
-AlignOperands: false
-AlignTrailingComments: false
-
-# Short forms
-AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: Never
-AllowShortLoopsOnASingleLine: false
-AllowShortBlocksOnASingleLine: Always
+AlignConsecutiveAssignments: Consecutive
+AlignAfterOpenBracket: Align
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
-IndentCaseLabels: true
-
-# Includes
-SortIncludes: Never
-IncludeBlocks: Preserve
-
-# Preprocessor
-IndentPPDirectives: None
-
-# Pointers
-PointerAlignment: Left
-DerivePointerAlignment: false
-
-# Comments
-ReflowComments: false
+AllowShortFunctionsOnASingleLine: All
+# Uncommenting these lines will sometimes result in lines following an
+# if(){} or for(){} block being attached to the end of the block.
+# AllowShortIfStatementsOnASingleLine: true
+# AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+BreakBeforeBraces: Attach
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
+PenaltyExcessCharacter: 100
+PenaltyReturnTypeOnItsOwnLine: 1
+PointerAlignment: Right
+SortIncludes: false
+SpaceBeforeParens: Never
+SpacesInContainerLiterals: false
