@@ -1,29 +1,38 @@
 #include "base/arena.h"
+#include "base/string8.h"
 #include "platform/platform.h"
+#include "engine/shader.h"
 
 int main(void) {
-	arena *a = arena_create(1024 * 1024); // 1 MB arena
-	platform_window *win = platform_create_window(a, 800, 600, "Triangle with EBO");
-
+	arena* a = arena_create(1024 * 1024); // 1 MB arena
+	platform_window* win = platform_create_window(a, 800, 600, "Triangle with EBO");
+	shader s = {0};
+	string8 vertex_file_path = string8_lit("assets/shaders/vertex.glsl");
+	string8 fragment_file_path = string8_lit("assets/shaders/fragment.glsl");
+	shader_init(a, &s, vertex_file_path, fragment_file_path);
+	glAttachShader(s.id, s.vertex_id);
+	glAttachShader(s.id, s.fragment_id);
+	glLinkProgram(s.id);
+	glUseProgram(s.id);
+	
 	// clang-format off
 	f32 vertices[] = {
-	    // positions      // colors
-	    0.0f, 0.5f, 1.0f, 0.0f, 0.0f,   // top, red
-	    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // left, green
-	    0.5f, -0.5f, 0.0f, 0.0f, 1.0f   // right, blue
+	 0.5f,  0.5f, 0.0f,  // 0 top right
+     0.5f, -0.5f, 0.0f,  // 1 bottom right
+    -0.5f, -0.5f, 0.0f,  // 2 bottom left
+    -0.5f,  0.5f, 0.0f   // 3 top left
 	};
 	u32 indices[] = {
-	    0, 1, 2
+	    0, 1, 3,
+		1, 2, 3 
 	};
 	// clang-format on
 	GLuint VAO, VBO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-
 	// Bind VAO
 	glBindVertexArray(VAO);
-
 	// Vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -34,12 +43,8 @@ int main(void) {
 
 	// Vertex attributes
 	// position
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0);
 	glEnableVertexAttribArray(0);
-	// color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
 	glBindVertexArray(0);
 
 	// --- Render loop ---
@@ -51,7 +56,7 @@ int main(void) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		platform_swap_buffers(win);
 	}

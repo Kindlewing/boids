@@ -1,27 +1,63 @@
 ---
 Language: C
-# Use tabs, not spaces
+
+# Tabs
 UseTab: ForIndentation
 TabWidth: 4
 IndentWidth: 4
 ContinuationIndentWidth: 4
-SortIncludes: false
 
-# Brace style
+# Line length
+ColumnLimit: 90
+
+# Braces
 BreakBeforeBraces: Attach
 
-# Spaces around parentheses
+# Whitespace
 SpaceBeforeParens: Never
-SpaceInEmptyParentheses: false
+SpacesInParentheses: false
+SpaceInBraces: false
+SpacesInSquareBrackets: false
+SpaceBeforeAssignmentOperators: true
 
-# Keep initializer lists on same line if possible
-BinPackParameters: true
+# Function calls / params
 BinPackArguments: true
+BinPackParameters: true
+AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: None
+
+# Short forms
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
 
-ColumnLimit: 0 # disable line wrapping for long arrays
-...
+# Alignment – IMPORTANT for tabs
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: false
+AlignTrailingComments: false
 
+# Line breaking preference
+BreakBeforeBinaryOperators: None
+PenaltyBreakAssignment: 1
+PenaltyBreakBeforeFirstCallParameter: 1
+AllowShortCallExpressionsOnASingleLine: All
+AlignAfterOpenBracket: DontAlign
+
+# Comments
+ReflowComments: false
+
+# Includes
+SortIncludes: false
+IncludeBlocks: Preserve
+
+# Preprocessor
+IndentPPDirectives: None
+
+# Pointers
+PointerAlignment: Left
+DerivePointerAlignment: false
+...
