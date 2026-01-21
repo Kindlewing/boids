@@ -61,8 +61,8 @@ static GLXContext create_core_context(Display *dpy, GLXFBConfig fb) {
     assert(dpy && "Display must not be NULL");
 
     PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB
-      = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
-	(const GLubyte *)"glXCreateContextAttribsARB");
+     = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
+      (const GLubyte *)"glXCreateContextAttribsARB");
     assert(glXCreateContextAttribsARB
 	   && "GLX_ARB_create_context not supported");
 

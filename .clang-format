@@ -15,7 +15,7 @@ AllowShortFunctionsOnASingleLine: All
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 BreakBeforeBraces: Attach
-ContinuationIndentWidth: 2
+ContinuationIndentWidth: 1
 Cpp11BracedListStyle: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1

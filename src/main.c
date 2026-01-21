@@ -13,7 +13,7 @@ int main(void) {
     assert(a && "Failed to create arena");
 
     platform_window *win = platform_create_window(
-      a, WINDOW_W, WINDOW_H, string8_lit("Triangle with EBO"));
+     a, WINDOW_W, WINDOW_H, string8_lit("Triangle with EBO"));
     assert(win && "Failed to create platform window");
 
     shader s		       = {0};
