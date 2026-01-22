@@ -2,6 +2,7 @@
 #include "base/string8.h"
 #include "platform/platform.h"
 #include "render/shader.h"
+#include <stdio.h>
 #include <assert.h>
 #include <GL/gl.h>
 
@@ -12,8 +13,8 @@ int main(void) {
 	arena *a = arena_create(1024 * 1024);
 	assert(a && "Failed to create arena");
 
-	spark_window *win = spark_create_window(
-	 a, WINDOW_W, WINDOW_H, string8_lit("Triangle with EBO"));
+	string8 title = string8_lit("Spark Engine");
+	spark_window *win = spark_create_window(a, WINDOW_W, WINDOW_H, title);
 	assert(win && "Failed to create platform window");
 
 	shader s = { 0 };
@@ -56,18 +57,12 @@ int main(void) {
 	assert(EBO != 0 && "Failed to generate EBO");
 
 	glBindVertexArray(VAO);
-
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(
-	 GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(
-	 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void *)0);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void *)0);
 	glEnableVertexAttribArray(0);
-
 	glBindVertexArray(0);
 
 	b8 should_close = false;

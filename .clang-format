@@ -6,7 +6,6 @@ IndentWidth: 4
 TabWidth: 4
 
 AlignAfterOpenBracket: AlwaysBreak
-
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
@@ -15,6 +14,8 @@ AllowShortFunctionsOnASingleLine: All
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 BreakBeforeBraces: Attach
+
+ColumnLimit: 90
 
 ContinuationIndentWidth: 1
 KeepEmptyLinesAtTheStartOfBlocks: false
