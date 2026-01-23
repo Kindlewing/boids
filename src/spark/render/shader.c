@@ -1,4 +1,4 @@
-#include "render/shader.h"
+#include "spark/render/shader.h"
 #include "base/typedefs.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -11,8 +11,7 @@ static inline void gl_shader_source_string8(GLuint shader, string8 src) {
 	glShaderSource(shader, 1, &s, &len);
 }
 
-void shader_init(
- arena *a, shader *s, string8 vertex_path, string8 fragment_path) {
+void shader_init(arena *a, shader *s, string8 vertex_path, string8 fragment_path) {
 	u32 vertex_fd = open((char *)vertex_path.data, O_RDONLY);
 	u32 fragment_fd = open((char *)fragment_path.data, O_RDONLY);
 	i64 vertex_size = lseek(vertex_fd, 0, SEEK_END);
