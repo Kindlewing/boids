@@ -1,17 +1,15 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
-
-#include "base/arena.h"
 #include "base/string8.h"
-#include "base/typedefs.h"
-#include <third_party/glad/gl.h>
+#include "base/types.h"
 
-typedef struct {
-} spark_window;
+typedef struct spark_window spark_window;
 
-spark_window *spark_create_window(arena *a, u32 width, u32 height, string8 name);
-void spark_swap_buffers(spark_window *window);
-void spark_poll_events(spark_window *win, b8 *should_close);
-void spark_close_window(spark_window *win);
+typedef struct spark_platform_api {
+	spark_window *(*create_window)(i32, i32, string8 title);
+	void (*destroy_window)(spark_window *);
+	void (*poll_events)(void);
+} spark_platform_api;
 
-#endif // PLATFORM_H
+extern spark_platform_api spark_platform;
+#endif
