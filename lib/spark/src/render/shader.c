@@ -1,13 +1,14 @@
-#include "spark/render/shader.h"
-#include "base/typedefs.h"
+#include "render/shader.h"
+#include "typedefs.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "third_party/glad/gl.h"
+#include "glad/glad.h"
 
 static inline void gl_shader_source_string8(GLuint shader, string8 src) {
 	const GLchar *s = (const GLchar *)src.data;
 	GLint len = (GLint)src.length;
+
 	glShaderSource(shader, 1, &s, &len);
 }
 

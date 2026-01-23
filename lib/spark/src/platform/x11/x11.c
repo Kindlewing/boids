@@ -1,13 +1,13 @@
-#include "base/arena.h"
-#include "base/string8.h"
-#include "spark/spark.h"
+#include "mem/arena.h"
+#include "str/string8.h"
+#include "spark.h"
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "spark/platform/x11.h"
+#include "platform/x11.h"
 
 struct spark_window {
 	Display *dpy;

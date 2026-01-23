@@ -1,6 +1,6 @@
-#include "base/arena.h"
-#include "base/string8.h"
-#include "spark/spark.h"
+#include "mem/arena.h"
+#include "str/string8.h"
+#include "spark.h"
 
 #define WINDOW_W    1200
 #define WINDOW_H    1200

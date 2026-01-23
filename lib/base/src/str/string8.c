@@ -1,7 +1,8 @@
-#include "base/string8.h"
+#include "str/string8.h"
 
 string8 string8_lit(char *str) {
 	string8 s;
+
 	s.data = (u8 *)str;
 	s.length = 0;
 	while(str[s.length] != 0) {
@@ -12,6 +13,7 @@ string8 string8_lit(char *str) {
 
 string8 string8_make(arena *a, char *cstring) {
 	string8 s;
+
 	s.length = 0;
 	while(cstring[s.length]) {
 		s.length++;
@@ -25,9 +27,12 @@ string8 string8_make(arena *a, char *cstring) {
 }
 
 string8 string8_read_file(arena *a, int fd) {
-	string8 s = { 0 };
+	string8 s = {
+		0
+	};
 
 	i64 size = lseek(fd, 0, SEEK_END);
+
 	lseek(fd, 0, SEEK_SET);
 
 	if(size <= 0) {

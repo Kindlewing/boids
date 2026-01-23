@@ -1,7 +1,7 @@
-#include "spark/spark.h"
+#include "spark.h"
 
 #if defined(__linux__)
-#include "spark/platform/x11.h"
+#include "platform/x11.h"
 #else
 #error "Unsupported platform"
 #endif
