@@ -1,6 +1,9 @@
 #include "base/arena.h"
+#include <string.h>
 
-static inline b8 is_power_of_two(usize x) { return x && ((x & (x - 1)) == 0); }
+static inline b8 is_power_of_two(usize x) {
+	return x && ((x & (x - 1)) == 0);
+}
 
 static inline usize align_forward_usize(usize offset, usize align) {
 	assert(is_power_of_two(align));
@@ -10,10 +13,12 @@ static inline usize align_forward_usize(usize offset, usize align) {
 
 arena *arena_create(u64 capacity) {
 	arena *arena = mmap(
-	 NULL, sizeof *arena + capacity, PROT_READ | PROT_WRITE,
-	 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+		NULL, sizeof *arena + capacity, PROT_READ | PROT_WRITE,
+		MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
 	if(arena == MAP_FAILED)
 		return NULL;
+
 	arena->base = (u8 *)arena + sizeof *arena;
 	arena->capacity = capacity;
 	arena->offset = 0;
@@ -37,16 +42,18 @@ void *arena_push_aligned(arena *arena, u64 size, size_t align) {
 
 void *arena_push_zero(arena *arena, u64 size) {
 	void *ptr = arena_push(arena, size);
+
 	if(!ptr)
 		return NULL;
 
 	u8 *p = (u8 *)ptr;
-	for(u64 i = 0; i < size; i++)
-		p[i] = 0;
+	memset(p, 0, size);
 	return ptr;
 }
 
-void arena_clear(arena *arena) { arena->offset = 0; }
+void arena_clear(arena *arena) {
+	arena->offset = 0;
+}
 
 void arena_free(arena *arena) {
 	munmap(arena, sizeof *arena + arena->capacity);
