@@ -1,4 +1,6 @@
 #include "spark.h"
+#include "base/string8.h"
+#include "base/typedefs.h"
 
 #if defined(__linux__)
 #include "platform/x11.h"
