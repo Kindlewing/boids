@@ -6,6 +6,7 @@
 #include <GL/glx.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "spark/platform/x11.h"
 
 struct spark_window {
@@ -20,14 +21,14 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	Display *dpy = XOpenDisplay(NULL);
 
 	if(dpy == NULL) {
-		string8 err = string8_lit("An error occured: cannot open X display.\n");
-		write(1, err.data, err.length);
-		exit(-1);
+		return NULL;
 	}
 	spark_window *win = arena_push_struct_zero(a, spark_window);
 	win->dpy = dpy;
 	Window root = DefaultRootWindow(win->dpy);
 	win->win = XCreateSimpleWindow(win->dpy, root, 0, 0, w, h, 0, 0, 0);
+	win->width = w;
+	win->height = h;
 	XMapWindow(win->dpy, win->win);
 	XFlush(win->dpy);
 	XStoreName(win->dpy, win->win, (char *)title.data);
