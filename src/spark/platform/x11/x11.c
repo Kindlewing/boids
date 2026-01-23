@@ -13,12 +13,12 @@ struct spark_window {
 	Window win;
 	XEvent event;
 	u32 width;
-
 	u32 height;
 };
 
 static spark_window *x11_create_window(u32 w, u32 h, string8 title) {
 	Display *dpy = XOpenDisplay(NULL);
+
 	if(dpy == NULL) {
 		string8 err = string8_lit("An error occured: cannot open X display.\n");
 		write(1, err.data, err.length);
@@ -41,5 +41,9 @@ static void x11_poll_events(spark_window *win) {
 static void x11_close_window(spark_window *win) {
 }
 
-spark_platform_api spark_platform = { .create_window = x11_create_window,
-	                                  .poll_events = x11_poll_events };
+spark_platform_api spark_platform = {
+	.create_window = x11_create_window,
+	.poll_events = x11_poll_events,
+	.close_window = x11_close_window
+
+};

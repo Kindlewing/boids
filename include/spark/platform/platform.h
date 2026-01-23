@@ -5,9 +5,9 @@
 #include "spark/spark.h"
 
 typedef struct spark_platform_api {
-	spark_window *(*create_window)(u32, u32, string8);
-	void (*destroy_window)(spark_window *);
-	void (*poll_events)(spark_window *);
+  spark_window *(*create_window)(u32, u32, string8);
+  void (*close_window)(spark_window *);
+  void (*poll_events)(spark_window *);
 } spark_platform_api;
 
 extern spark_platform_api spark_platform;
