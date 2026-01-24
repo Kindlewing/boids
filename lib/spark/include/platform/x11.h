@@ -2,6 +2,9 @@
 #include "spark.h"
 #include "str/string8.h"
 #include "typedefs.h"
+#include <GL/glx.h>
+#include <X11/X.h>
+#include <X11/Xlib.h>
 
 spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title);
 void platform_poll_events(spark_window *win);
