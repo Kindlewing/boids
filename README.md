@@ -4,6 +4,9 @@ A boids simulation (eventually) written in C, with minimal external dependencies
 
 ## Quick start
 
+> [!NOTE]
+> This is currently only suported on Linux.
+
 0. Make sure you have OpenGL installed. That should be the **only** dependency you need
 1. `git clone https://github.com/Kindlewing/boids`
 2. `cd boids`
