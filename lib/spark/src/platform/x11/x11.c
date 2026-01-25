@@ -122,9 +122,14 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	attr.event_mask = ExposureMask | KeyPressMask;
 	Window x_window = XCreateWindow(dpy, root, x, y, w, h, border_width, vi->depth, InputOutput,
 									vi->visual, CWEventMask | CWColormap, &attr);
-	// TODO Create context, Initialize OpenGL/Glad
 	GLXContext ctx = x11_create_core_ctx(dpy, cfg);
 	glXMakeCurrent(dpy, x_window, ctx);
+
+	// Initialize glad
+	if (!gladLoadGL((GLADloadfunc)glXGetProcAddressARB)) {
+		x11_err(string8_lit("Failed to initialize glad"));
+		return NULL;
+	}
 	win->opengl_ctx = ctx;
 
 	win->dpy = dpy;
