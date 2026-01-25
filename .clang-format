@@ -19,6 +19,7 @@ BraceWrapping:
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Always
+ColumnLimit: 100
 
 IndentCaseLabels: false
 ContinuationIndentWidth: 8

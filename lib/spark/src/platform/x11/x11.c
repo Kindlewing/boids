@@ -12,6 +12,7 @@ struct spark_window {
 	Window x_window;
 	XEvent event;
 	GLXFBConfig fb_cfg;
+	GLXContext opengl_ctx;
 	XVisualInfo *vi;
 	i32 scren_num;
 	u32 width;
@@ -25,23 +26,30 @@ static void x11_err(string8 err) {
 	write(2, "\n", 1);
 }
 
-static int x11_error_handler(Display *dpy, XErrorEvent *e) {
-	char text[256];
-	XGetErrorText(dpy, e->error_code, text, sizeof(text));
+static GLXContext x11_create_core_ctx(Display *dpy, GLXFBConfig fb_cfg) {
+	PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB =
+			(PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
+					(const GLubyte *)"glXCreateContextAttribsARB");
+	assert(glXCreateContextAttribsARB && "GLX_ARB_create_context not supported");
 
-	string8 prefix = string8_lit("[x11] ");
-	x11_err(prefix);
+	int context_attribs[] = {GLX_CONTEXT_MAJOR_VERSION_ARB,
+							 4,
+							 GLX_CONTEXT_MINOR_VERSION_ARB,
+							 6,
+							 GLX_CONTEXT_PROFILE_MASK_ARB,
+							 GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+#ifndef NDEBUG
+							 GLX_CONTEXT_FLAGS_ARB,
+							 GLX_CONTEXT_DEBUG_BIT_ARB,
+#endif
+							 None};
 
-	// XGetErrorText guarantees null-terminated, but we cap manually
-	u64 len = 0;
-	while (len < sizeof(text) && text[len]) {
-		len++;
+	GLXContext ctx = glXCreateContextAttribsARB(dpy, fb_cfg, NULL, True, context_attribs);
+	if (!ctx) {
+		x11_err(string8_lit("[x11] Failed to create OpenGL 4.6 core context\n"));
+		return NULL;
 	}
-
-	string8 msg = {(u8 *)text, len};
-	x11_err(msg);
-
-	return 0;
+	return ctx;
 }
 
 static GLXFBConfig x11_get_framebuffer_config(Display *dpy, i32 screen) {
@@ -71,8 +79,7 @@ static GLXFBConfig x11_get_framebuffer_config(Display *dpy, i32 screen) {
 	i32 config_count = 0;
 
 	// Try to get the configs
-	GLXFBConfig *configs =
-			glXChooseFBConfig(dpy, screen, attributes, &config_count);
+	GLXFBConfig *configs = glXChooseFBConfig(dpy, screen, attributes, &config_count);
 
 	if (config_count <= 0) {
 		return NULL;
@@ -86,9 +93,6 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 		x11_err(string8_lit("X Display could not be created\n"));
 		return NULL;
 	}
-
-	XSetErrorHandler(x11_error_handler);
-	XSync(dpy, False);
 
 	spark_window *win = arena_push_struct_zero(a, spark_window);
 	u32 screen = DefaultScreen(dpy);
@@ -116,10 +120,12 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	i32 border_width = 0;
 	attr.colormap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 	attr.event_mask = ExposureMask | KeyPressMask;
-	Window x_window = XCreateWindow(dpy, root, x, y, w, h, border_width,
-									vi->depth, InputOutput, vi->visual,
-									CWEventMask | CWColormap, &attr);
+	Window x_window = XCreateWindow(dpy, root, x, y, w, h, border_width, vi->depth, InputOutput,
+									vi->visual, CWEventMask | CWColormap, &attr);
 	// TODO Create context, Initialize OpenGL/Glad
+	GLXContext ctx = x11_create_core_ctx(dpy, cfg);
+	glXMakeCurrent(dpy, x_window, ctx);
+	win->opengl_ctx = ctx;
 
 	win->dpy = dpy;
 	win->width = w;
@@ -129,17 +135,17 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	win->x_window = x_window;
 	win->scren_num = screen;
 	XMapWindow(win->dpy, win->x_window);
-	XFlush(win->dpy);
 	XStoreName(win->dpy, win->x_window, (char *)title.data);
 	return win;
 }
 
 void platform_poll_events(spark_window *win) {
-	XEvent e;
 	while (XPending(win->dpy)) {
-		XNextEvent(win->dpy, &e);
+		XNextEvent(win->dpy, &win->event);
 	}
 }
+
+void platform_swap_buffers(spark_window *win) { glXSwapBuffers(win->dpy, win->x_window); }
 
 void platform_close_window(spark_window *win) {
 	XUnmapWindow(win->dpy, win->x_window);
