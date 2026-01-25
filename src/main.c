@@ -2,6 +2,7 @@
 #include "mem/arena.h"
 #include "spark.h"
 #include "str/string8.h"
+#include <stdio.h>
 
 #define WINDOW_W 1200
 #define WINDOW_H 1200
