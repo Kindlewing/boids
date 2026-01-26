@@ -52,7 +52,25 @@ static GLXContext x11_create_core_ctx(Display *dpy, GLXFBConfig fb_cfg) {
 	return ctx;
 }
 
-static GLXFBConfig x11_get_framebuffer_config(Display *dpy, i32 screen) {
+spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
+	Display *dpy = XOpenDisplay(NULL);
+	if (dpy == NULL) {
+		x11_err(string8_lit("X Display could not be created\n"));
+		return NULL;
+	}
+
+	spark_window *win = arena_push_struct_zero(a, spark_window);
+	u32 screen = DefaultScreen(dpy);
+	Window root = DefaultRootWindow(dpy);
+
+	// Query the  GLX version
+	i32 major;
+	i32 minor;
+	b8 ok = glXQueryVersion(dpy, &major, &minor);
+	if (!ok) {
+		x11_err(string8_lit("Unable to query the GLX version.\n"));
+	}
+
 	i32 attributes[] = {
 			GLX_X_RENDERABLE,
 			True,
@@ -76,37 +94,14 @@ static GLXFBConfig x11_get_framebuffer_config(Display *dpy, i32 screen) {
 			8,
 			None,
 	};
+
 	i32 config_count = 0;
-
-	// Try to get the configs
 	GLXFBConfig *configs = glXChooseFBConfig(dpy, screen, attributes, &config_count);
-
 	if (config_count <= 0) {
-		return NULL;
+		x11_err(string8_lit("Unable to find any framebuffer configurations"));
 	}
-	return configs[0];
-}
+	GLXFBConfig cfg = configs[0];
 
-spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
-	Display *dpy = XOpenDisplay(NULL);
-	if (dpy == NULL) {
-		x11_err(string8_lit("X Display could not be created\n"));
-		return NULL;
-	}
-
-	spark_window *win = arena_push_struct_zero(a, spark_window);
-	u32 screen = DefaultScreen(dpy);
-	Window root = DefaultRootWindow(dpy);
-
-	// Query the  GLX version
-	i32 major;
-	i32 minor;
-	b8 ok = glXQueryVersion(dpy, &major, &minor);
-	if (!ok) {
-		x11_err(string8_lit("Unable to query the GLX version.\n"));
-	}
-
-	GLXFBConfig cfg = x11_get_framebuffer_config(dpy, screen);
 	if (cfg == NULL) {
 		x11_err(string8_lit("No suitible framebuffer config found.\n"));
 		return NULL;
@@ -130,8 +125,8 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 		x11_err(string8_lit("Failed to initialize glad"));
 		return NULL;
 	}
-	win->opengl_ctx = ctx;
 
+	win->opengl_ctx = ctx;
 	win->dpy = dpy;
 	win->width = w;
 	win->height = h;

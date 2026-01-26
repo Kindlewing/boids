@@ -1,4 +1,5 @@
 #include "macros.h"
+#include "math.h"
 #include "mem/arena.h"
 #include "spark.h"
 #include "str/string8.h"

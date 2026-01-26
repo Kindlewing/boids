@@ -4,6 +4,11 @@
 #include "mem/arena.h"
 #include "str/string8.h"
 
+typedef enum {
+	E_SUCCESS,
+	E_WINDOW,
+} spark_error;
+
 typedef struct spark_window spark_window;
 
 spark_window *spark_create_window(arena *a, u32 width, u32 height, string8 title);
