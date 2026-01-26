@@ -7,6 +7,14 @@ if(UNIX)
 	  src/string8.c
 	  src/math.c
 	)
+else()
+	message("Compiling on Windows")
+	add_library(base STATIC
+	  src/arena_win32.c
+	  src/string8.c
+	  src/math.c
+	)
+
 endif()
 
 target_include_directories(base PUBLIC
