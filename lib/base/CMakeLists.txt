@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 add_library(base STATIC
     src/mem/arena.c
     src/str/string8.c
+	src/math.c
 )
 
 target_include_directories(base PUBLIC
