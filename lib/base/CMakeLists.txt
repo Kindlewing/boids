@@ -1,27 +1,20 @@
 cmake_minimum_required(VERSION 3.20)
 
-if(UNIX) 
-	message("Compiling on Unix")
-	add_library(base STATIC
-	  src/arena_linux.c
-	  src/string8.c
-	  src/math.c
-	)
+if(WIN32)
+    set(BASE_PLATFORM_SRC src/arena_win32.c)
 else()
-	message("Compiling on Windows")
-	add_library(base STATIC
-	  src/arena_win32.c
-	  src/string8.c
-	  src/math.c
-	)
-
+    set(BASE_PLATFORM_SRC src/arena_linux.c)
 endif()
 
-target_include_directories(base PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+add_library(base STATIC
+    ${BASE_PLATFORM_SRC}
+    src/string8.c
+    src/math.c
 )
 
+target_include_directories(base PUBLIC include)
+
 target_compile_options(base PRIVATE
-    -Wall
-    -Wextra
+    $<$<C_COMPILER_ID:GNU,Clang>:-Wall -Wextra>
+    $<$<C_COMPILER_ID:MSVC>:/W4>
 )
