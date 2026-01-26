@@ -10,6 +10,9 @@
 
 int main(void) {
 	arena *engine_arena = arena_create(KiB(64));
+#if defined(_WIN32)
+	return 0;
+#endif
 	string8 title = string8_lit("Spark Engine");
 	spark_window *window = spark_create_window(engine_arena, WINDOW_W, WINDOW_H, title);
 
