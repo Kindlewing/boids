@@ -1,6 +1,5 @@
 #include "spark.h"
-
-#include "str/string8.h"
+#include "string8.h"
 #include "typedefs.h"
 
 #if defined(__linux__)

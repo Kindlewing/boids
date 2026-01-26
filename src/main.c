@@ -1,8 +1,8 @@
+#include "arena.h"
 #include "macros.h"
 #include "math.h"
-#include "mem/arena.h"
 #include "spark.h"
-#include "str/string8.h"
+#include "string8.h"
 #include <stdio.h>
 
 #define WINDOW_W 1200

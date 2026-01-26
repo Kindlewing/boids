@@ -1,7 +1,7 @@
 #include "platform/x11.h"
-#include "mem/arena.h"
+#include "arena.h"
 #include "spark.h"
-#include "str/string8.h"
+#include "string8.h"
 #include <GL/glx.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>

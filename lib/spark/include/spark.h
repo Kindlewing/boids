@@ -1,8 +1,8 @@
 #ifndef SPARK_H
 #define SPARK_H
+#include "arena.h"
 #include "glad/glad.h"
-#include "mem/arena.h"
-#include "str/string8.h"
+#include "string8.h"
 
 typedef enum {
 	E_SUCCESS,
