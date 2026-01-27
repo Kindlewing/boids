@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <unistd.h>
 
-#include "types.h"
+#include "typedefs.h"
 #include <sys/mman.h>
 
 #ifndef DEFAULT_ALIGNMENT
