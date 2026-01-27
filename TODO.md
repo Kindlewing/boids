@@ -4,6 +4,8 @@
 - [ ] linear algebra functions
 - [ ] dynamic array support
 - [ ] hashmap?
+- [ ] time (platform-independent ideally, but we'll get there)
+- [ ] profiling
 
 # Spark
 
