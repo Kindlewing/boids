@@ -8,11 +8,11 @@ set(SPARK_SOURCES
 
 if(WIN32)
     list(APPEND SPARK_SOURCES src/platform/win32/win32.c)
-elseif(APPLE)
-    list(APPEND SPARK_SOURCES src/platform/cocoa/cocoa.m)
-else()
+elseif(UNIX AND NOT APPLE)
     list(APPEND SPARK_SOURCES src/platform/x11/x11.c)
     find_package(X11 REQUIRED)
+else()
+    list(APPEND SPARK_SOURCES src/platform/cocoa/cocoa.m)
 endif()
 
 find_package(OpenGL REQUIRED)
