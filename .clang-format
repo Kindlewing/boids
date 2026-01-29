@@ -16,6 +16,8 @@ BraceWrapping:
   BeforeElse: false
   IndentBraces: false
 
+SpaceBeforeParens: Never
+
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Never

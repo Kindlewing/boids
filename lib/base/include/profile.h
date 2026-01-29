@@ -6,6 +6,14 @@
 
 #define PROFILE_MAX_ANCHORS 4096
 
+#define begin_time_function                                                                        \
+	profile_block block;                                                                           \
+	do {                                                                                           \
+		init_profile_block(&block, string8_lit(__func__), __COUNTER__);                            \
+	} while (0)
+
+#define end_time_function destroy_profile_block(&block)
+
 typedef struct {
 	u64 tsc_elapsed;
 	u64 times_hit; // how many times have we called this?

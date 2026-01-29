@@ -10,6 +10,7 @@ add_library(base STATIC
     ${BASE_PLATFORM_SRC}
     src/string8.c
     src/math.c
+	src/profile.c
 )
 
 target_include_directories(base PUBLIC include)

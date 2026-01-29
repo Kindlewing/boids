@@ -1,6 +1,6 @@
 #include "string8.h"
 
-string8 string8_lit(char *str) {
+string8 string8_lit(const char *str) {
 	string8 s;
 
 	s.data = (u8 *)str;
@@ -11,7 +11,7 @@ string8 string8_lit(char *str) {
 	return s;
 }
 
-string8 string8_make(arena *a, char *cstring) {
+string8 string8_make(arena *a, const char *cstring) {
 	string8 s;
 
 	s.length = 0;
