@@ -15,7 +15,10 @@ static u64 read_os_timer(void) {
 	return res;
 }
 
-void init_profile_block(profile_block *block, string8 name, u32 idx) { block->label = name; }
+void init_profile_block(profile_block *block, string8 name, u32 idx) {
+	block->anchor_index = read_os_timer();
+	block->anchor_index = 1;
+}
 
 void destroy_profile_block(profile_block *block) {}
 

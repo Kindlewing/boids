@@ -18,7 +18,7 @@ BraceWrapping:
 
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AllowShortBlocksOnASingleLine: Always
+AllowShortBlocksOnASingleLine: Never
 ColumnLimit: 100
 
 IndentCaseLabels: false
