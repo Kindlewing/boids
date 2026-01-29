@@ -1,5 +1,6 @@
 #include "platform/x11.h"
 #include "arena.h"
+#include "profile.h"
 #include "spark.h"
 #include "string8.h"
 #include <GL/glx.h>
@@ -45,7 +46,7 @@ static GLXContext x11_create_core_ctx(Display *dpy, GLXFBConfig fb_cfg) {
 							 None};
 
 	GLXContext ctx = glXCreateContextAttribsARB(dpy, fb_cfg, NULL, True, context_attribs);
-	if (!ctx) {
+	if(!ctx) {
 		x11_err(string8_lit("[x11] Failed to create OpenGL 4.6 core context\n"));
 		return NULL;
 	}
@@ -53,8 +54,9 @@ static GLXContext x11_create_core_ctx(Display *dpy, GLXFBConfig fb_cfg) {
 }
 
 spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
+	begin_time_function;
 	Display *dpy = XOpenDisplay(NULL);
-	if (dpy == NULL) {
+	if(dpy == NULL) {
 		x11_err(string8_lit("X Display could not be created\n"));
 		return NULL;
 	}
@@ -67,7 +69,7 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	i32 major;
 	i32 minor;
 	b8 ok = glXQueryVersion(dpy, &major, &minor);
-	if (!ok) {
+	if(!ok) {
 		x11_err(string8_lit("Unable to query the GLX version.\n"));
 	}
 
@@ -97,12 +99,12 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 
 	i32 config_count = 0;
 	GLXFBConfig *configs = glXChooseFBConfig(dpy, screen, attributes, &config_count);
-	if (config_count <= 0) {
+	if(config_count <= 0) {
 		x11_err(string8_lit("Unable to find any framebuffer configurations"));
 	}
 	GLXFBConfig cfg = configs[0];
 
-	if (cfg == NULL) {
+	if(cfg == NULL) {
 		x11_err(string8_lit("No suitible framebuffer config found.\n"));
 		return NULL;
 	}
@@ -121,7 +123,7 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	glXMakeCurrent(dpy, x_window, ctx);
 
 	// Initialize glad
-	if (!gladLoadGL((GLADloadfunc)glXGetProcAddressARB)) {
+	if(!gladLoadGL((GLADloadfunc)glXGetProcAddressARB)) {
 		x11_err(string8_lit("Failed to initialize glad"));
 		return NULL;
 	}
@@ -136,11 +138,12 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	win->scren_num = screen;
 	XMapWindow(win->dpy, win->x_window);
 	XStoreName(win->dpy, win->x_window, (char *)title.data);
+	end_time_function;
 	return win;
 }
 
 void platform_poll_events(spark_window *win) {
-	while (XPending(win->dpy)) {
+	while(XPending(win->dpy)) {
 		XNextEvent(win->dpy, &win->event);
 	}
 }

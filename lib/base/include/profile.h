@@ -9,20 +9,23 @@
 #define begin_time_function                                                                        \
 	profile_block block;                                                                           \
 	do {                                                                                           \
-		init_profile_block(&block, string8_lit(__func__), __COUNTER__);                            \
-	} while (0)
+		init_profile_block(&block, string8_lit(__func__));                                         \
+	} while(0)
 
 #define end_time_function destroy_profile_block(&block)
 
 typedef struct {
-	u64 tsc_elapsed;
-	u64 times_hit; // how many times have we called this?
+	u64 tsc_elapsed;		  // how much time has elapsed for this anchor
+	u64 tsc_elapsed_children; // how much time has elapsed for this anchor's children?
+	u64 times_hit;			  // how many times have we called this?
+
 	string8 label;
 } profile_anchor;
 
 typedef struct {
 	u64 start_tsc;
-	u32 anchor_index; // function/scope this lives in
+	u32 parent_idx; // the caller's scope
+	u32 anchor_idx; // function/scope this lives in
 } profile_block;
 
 typedef struct {
@@ -32,7 +35,7 @@ typedef struct {
 } profiler;
 
 void begin_profile(void);
-void init_profile_block(profile_block *block, string8 name, u32 idx);
+void init_profile_block(profile_block *block, string8 name);
 void destroy_profile_block(profile_block *block);
 void end_profile(void);
 #endif
