@@ -6,13 +6,17 @@
 
 #define PROFILE_MAX_ANCHORS 4096
 
-#define begin_time_function                                                                        \
-	profile_block block;                                                                           \
-	do {                                                                                           \
-		init_profile_block(&block, string8_lit(__func__));                                         \
-	} while(0)
+#define begin_time_function begin_time_block(__func__)
 
 #define end_time_function destroy_profile_block(&block)
+
+#define begin_time_block(name)                                                                     \
+	profile_block block;                                                                           \
+	do {                                                                                           \
+		init_profile_block(&block, string8_lit(name));                                             \
+	} while(0)
+
+#define end_time_block destroy_profile_block(&block)
 
 typedef struct {
 	u64 tsc_elapsed;		  // how much time has elapsed for this anchor

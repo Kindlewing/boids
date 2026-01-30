@@ -12,6 +12,7 @@ typedef enum {
 typedef struct spark_window spark_window;
 
 spark_window *spark_create_window(arena *a, u32 width, u32 height, string8 title);
+b8 spark_window_should_close(spark_window *win);
 void spark_swap_buffers(spark_window *window);
 void spark_poll_events(spark_window *win);
 void spark_close_window(spark_window *win);

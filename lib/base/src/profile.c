@@ -18,8 +18,14 @@ u32 profile_get_anchor(string8 label) {
 	return idx;
 }
 
-void begin_profile() { global_prof.start_tsc = __rdtsc(); }
-static u64 get_timer_freq(void) { return 1000000; }
+void begin_profile() {
+	global_prof.start_tsc = __rdtsc();
+}
+
+static u64 get_timer_freq(void) {
+	return 1000000;
+}
+
 static u64 read_os_timer(void) {
 	struct timeval time_value;
 	gettimeofday(&time_value, 0);
@@ -80,7 +86,7 @@ void end_profile() {
 	}
 	u64 total_cycles = global_prof.end_tsc - global_prof.start_tsc;
 	f64 total_seconds = (f64)total_cycles / (f64)cpu_freq;
-	printf("Total time: %.6f ms\n\n", total_seconds * 1000.0);
+	printf("Total time: %.3f ms\n\n", total_seconds * 1000.0);
 
 	for(u32 i = 0; i < PROFILE_MAX_ANCHORS; ++i) {
 		profile_anchor *a = &global_prof.anchors[i];
@@ -90,11 +96,14 @@ void end_profile() {
 		}
 
 		f64 self_seconds = (f64)self_time / (f64)cpu_freq;
-		printf("%-30.*s | hits: %6llu | time (self): %8.3f ms", (int)a->label.length, a->label.data,
-			   a->times_hit, self_seconds);
+		f64 average = (self_seconds / (f64)a->times_hit) * 1000.0;
+		printf("%-30.*s | hits: %6llu | time (self): %8.3f ms | average (self): %8.3f ms",
+			   (int)a->label.length, a->label.data, a->times_hit, self_seconds * 1000.0, average);
 		if(a->tsc_elapsed_children > 0) {
 			f64 seconds_with_children = (f64)a->tsc_elapsed / (f64)cpu_freq;
 			printf(" | with children: %8.3f ms\n", seconds_with_children * 1000.0);
+		} else {
+			printf("\n");
 		}
 	}
 }

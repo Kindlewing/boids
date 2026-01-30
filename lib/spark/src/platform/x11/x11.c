@@ -6,6 +6,7 @@
 #include <GL/glx.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <unistd.h>
 
 struct spark_window {
@@ -18,6 +19,7 @@ struct spark_window {
 	i32 scren_num;
 	u32 width;
 	u32 height;
+	b8 should_close;
 };
 
 static void x11_err(string8 err) {
@@ -136,6 +138,7 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	win->fb_cfg = cfg;
 	win->x_window = x_window;
 	win->scren_num = screen;
+	win->should_close = false;
 	XMapWindow(win->dpy, win->x_window);
 	XStoreName(win->dpy, win->x_window, (char *)title.data);
 	end_time_function;
@@ -145,10 +148,22 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 void platform_poll_events(spark_window *win) {
 	while(XPending(win->dpy)) {
 		XNextEvent(win->dpy, &win->event);
+		switch(win->event.type) {
+		case KeyPress:
+			if(XLookupKeysym(&win->event.xkey, 0) == XK_Escape) {
+				win->should_close = true;
+			}
+		}
 	}
 }
 
-void platform_swap_buffers(spark_window *win) { glXSwapBuffers(win->dpy, win->x_window); }
+b8 platform_window_should_close(spark_window *win) {
+	return win->should_close;
+}
+
+void platform_swap_buffers(spark_window *win) {
+	glXSwapBuffers(win->dpy, win->x_window);
+}
 
 void platform_close_window(spark_window *win) {
 	XUnmapWindow(win->dpy, win->x_window);
