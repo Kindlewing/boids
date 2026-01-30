@@ -27,24 +27,6 @@ string8 string8_make(arena *a, const char *cstring) {
 }
 
 string8 string8_read_file(arena *a, int fd) {
-	string8 s = {0};
-
-	i64 size = lseek(fd, 0, SEEK_END);
-
-	lseek(fd, 0, SEEK_SET);
-
-	if(size <= 0) {
-		return s;
-	}
-
-	s.data = arena_push_array(a, u8, size);
-	s.length = size;
-
-	i64 read_bytes = read(fd, s.data, size);
-	if(read_bytes != size) {
-		// handle error if you care
-	}
-	return s;
 }
 
 b8 string8_eq(string8 *s1, string8 *s2) {
