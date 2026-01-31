@@ -8,10 +8,18 @@
 
 ### Prerequisites
 
-- Cmake (All)
-- OpenGL (All)
-- Make (Linux)
-- X11 (Linux)
+Linux:
+
+- Cmake
+- Make
+- X11
+- OpenGL
+
+Windows:
+
+- Visual Studio
+- Cmake
+- OpenGL
 
 ### Building
 
