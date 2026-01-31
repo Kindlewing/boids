@@ -9,11 +9,13 @@ endif()
 add_library(base STATIC
     ${BASE_PLATFORM_SRC}
     src/string8.c
-    src/math.c
+    src/linalg.c
 	src/profile.c
 )
 
 target_include_directories(base PUBLIC include)
+
+target_link_libraries(base PUBLIC m)
 
 target_compile_options(base PRIVATE
     $<$<C_COMPILER_ID:GNU,Clang>:-Wall -Wextra>
