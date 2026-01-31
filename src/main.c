@@ -51,12 +51,11 @@ int main(void) {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// shaders
-	arena *shader_arena = arena_create(MiB(500));
+	arena *shader_arena = arena_create(KiB(500));
 	shader s;
 	string8 v_path = string8_lit("assets/shaders/vertex.glsl");
 	string8 f_path = string8_lit("assets/shaders/fragment.glsl");
 	shader_init(shader_arena, &s, v_path, f_path);
-
 	glUseProgram(s.id);
 
 	while(!spark_window_should_close(window)) {
