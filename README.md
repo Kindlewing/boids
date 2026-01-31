@@ -7,14 +7,8 @@
 
 ### Prerequisites
 
-#### Linux
-
-- X11
-- OpenGL
-
-#### Windows (not currently supported)
-
-- OpenGL
+- X11 (Linux)
+- OpenGL (Linux and Windows)
 
 ### Building
 
