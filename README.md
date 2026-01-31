@@ -8,8 +8,10 @@
 
 ### Prerequisites
 
+- Cmake (All)
+- OpenGL (All)
+- Make (Linux)
 - X11 (Linux)
-- OpenGL (Linux and Windows)
 
 ### Building
 
@@ -19,3 +21,5 @@
     git clone https://github.com/Kindlewing/boids
     cd boids
 ```
+
+2. Generate Makefile (Linux) or Visual Studio Solution (Windows)
