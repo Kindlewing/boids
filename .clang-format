@@ -22,7 +22,7 @@ AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortBlocksOnASingleLine: Never
-ColumnLimit: 100
+ColumnLimit: 90
 
 IndentCaseLabels: false
 ContinuationIndentWidth: 8

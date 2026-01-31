@@ -119,8 +119,9 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	i32 border_width = 0;
 	attr.colormap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 	attr.event_mask = ExposureMask | KeyPressMask;
-	Window x_window = XCreateWindow(dpy, root, x, y, w, h, border_width, vi->depth, InputOutput,
-									vi->visual, CWEventMask | CWColormap, &attr);
+	Window x_window =
+			XCreateWindow(dpy, root, x, y, w, h, border_width, vi->depth, InputOutput,
+						  vi->visual, CWEventMask | CWColormap, &attr);
 	GLXContext ctx = x11_create_core_ctx(dpy, cfg);
 	glXMakeCurrent(dpy, x_window, ctx);
 
@@ -134,6 +135,11 @@ spark_window *platform_create_window(arena *a, u32 w, u32 h, string8 title) {
 	win->dpy = dpy;
 	win->width = w;
 	win->height = h;
+
+	int fb_width = win->width;
+	int fb_height = win->height;
+	glViewport(0, 0, fb_width, fb_height);
+
 	win->vi = vi;
 	win->fb_cfg = cfg;
 	win->x_window = x_window;

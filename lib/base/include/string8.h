@@ -13,7 +13,7 @@ typedef struct {
 string8 string8_lit(const char *str);
 string8 string8_make(arena *a, const char *cstring);
 
-string8 string8_read_file(arena *a, int fd);
+string8 string8_read_file(arena *a, int fd, i64 size);
 b8 string8_eq(string8 *s1, string8 *s2);
 
 #endif // STRING8_H

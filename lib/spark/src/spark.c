@@ -1,4 +1,5 @@
 #include "spark.h"
+#include "glad/glad.h"
 #include "string8.h"
 #include "typedefs.h"
 

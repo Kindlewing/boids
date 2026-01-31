@@ -1,4 +1,8 @@
 #include "string8.h"
+#include "arena.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 string8 string8_lit(const char *str) {
 	string8 s;
@@ -26,7 +30,16 @@ string8 string8_make(arena *a, const char *cstring) {
 	return s;
 }
 
-string8 string8_read_file(arena *a, int fd) {
+string8 string8_read_file(arena *a, int fd, i64 size) {
+	string8 contents = {0};
+	contents.data = arena_push_array(a, u8, size);
+	ssize_t bytes_read = read(fd, contents.data, size);
+	if(bytes_read < 0) {
+		perror("Failed to read shader file");
+		exit(-1);
+	}
+	contents.length = bytes_read;
+	return contents;
 }
 
 b8 string8_eq(string8 *s1, string8 *s2) {
