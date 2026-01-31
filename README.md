@@ -7,6 +7,15 @@
 
 ### Prerequisites
 
+#### Linux
+
+- X11
+- OpenGL
+
+#### Windows (not currently supported)
+
+- OpenGL
+
 ### Building
 
 1. Clone the repository:
