@@ -3,6 +3,7 @@
 <p align="center">
     A boids simulation (eventually) written in C, with minimal external dependencies.
 </p>
+
 ## Getting Started
 
 ### Prerequisites
