@@ -8,4 +8,6 @@ typedef struct {
 	f32 y;
 } vector2f32;
 
+inline f32 base_sqrtf32(f32 x);
+
 #endif

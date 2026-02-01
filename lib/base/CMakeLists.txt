@@ -9,7 +9,7 @@ endif()
 add_library(base STATIC
     ${BASE_PLATFORM_SRC}
     src/string8.c
-    src/math.c
+    src/base_math.c
 	src/profile.c
 )
 
