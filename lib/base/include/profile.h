@@ -2,7 +2,6 @@
 #define PROFILE_H
 #include "string8.h"
 #include "typedefs.h"
-#include <x86intrin.h>
 
 #define PROFILE_MAX_ANCHORS 4096
 
@@ -10,10 +9,10 @@
 
 #define end_time_function destroy_profile_block(&block)
 
-#define begin_time_block(name)                                                                     \
-	profile_block block;                                                                           \
-	do {                                                                                           \
-		init_profile_block(&block, string8_lit(name));                                             \
+#define begin_time_block(name)                                                           \
+	profile_block block;                                                                 \
+	do {                                                                                 \
+		init_profile_block(&block, string8_lit(name));                                   \
 	} while(0)
 
 #define end_time_block destroy_profile_block(&block)

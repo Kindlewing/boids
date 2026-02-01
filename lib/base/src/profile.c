@@ -1,11 +1,43 @@
 #include "profile.h"
-#include "sys/time.h"
 #include "typedefs.h"
 #include <stdio.h>
 
 static profiler global_prof;
 static u32 global_parent_idx;
 static u32 global_anchor_count;
+
+#if _WIN32
+#include <intrin.h>
+#include <windows.h>
+
+static u64 get_os_timer_freq(void) {
+	LARGE_INTEGER freq;
+	QueryPerformanceFrequency(&freq);
+	return freq.QuadPart;
+}
+
+static u64 read_os_timer(void) {
+	LARGE_INTEGER value;
+	QueryPerformanceCounter(&value);
+	return value.QuadPart;
+}
+
+#else
+#include <sys/time.h>
+#include <x86intrin.h>
+
+static u64 get_os_timer_freq(void) {
+	return 1000000;
+}
+
+static u64 read_os_timer(void) {
+	struct timeval time_value;
+	gettimeofday(&time_value, 0);
+	u64 res = get_os_timer_freq() * (u64)time_value.tv_sec + (u64)time_value.tv_usec;
+	return res;
+}
+
+#endif
 
 u32 profile_get_anchor(string8 label) {
 	for(u32 i = 0; i < global_anchor_count; ++i) {
@@ -22,20 +54,9 @@ void begin_profile() {
 	global_prof.start_tsc = __rdtsc();
 }
 
-static u64 get_timer_freq(void) {
-	return 1000000;
-}
-
-static u64 read_os_timer(void) {
-	struct timeval time_value;
-	gettimeofday(&time_value, 0);
-	u64 res = get_timer_freq() * (u64)time_value.tv_sec + (u64)time_value.tv_usec;
-	return res;
-}
-
 static u64 estimate_cpu_timer_freq(void) {
 	u64 ms_to_wait = 100;
-	u64 os_freq = get_timer_freq();
+	u64 os_freq = get_os_timer_freq();
 	u64 cpu_start = __rdtsc();
 	u64 os_start = read_os_timer();
 	u64 os_elapsed = 0;
@@ -98,7 +119,8 @@ void end_profile() {
 		f64 self_seconds = (f64)self_time / (f64)cpu_freq;
 		f64 average = (self_seconds / (f64)a->times_hit) * 1000.0;
 		printf("%-30.*s | hits: %6llu | time (self): %8.3f ms | average (self): %8.3f ms",
-			   (int)a->label.length, a->label.data, a->times_hit, self_seconds * 1000.0, average);
+			   (int)a->label.length, a->label.data, a->times_hit, self_seconds * 1000.0,
+			   average);
 		if(a->tsc_elapsed_children > 0) {
 			f64 seconds_with_children = (f64)a->tsc_elapsed / (f64)cpu_freq;
 			printf(" | with children: %8.3f ms\n", seconds_with_children * 1000.0);

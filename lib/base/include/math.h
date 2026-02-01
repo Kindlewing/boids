@@ -1,8 +1,7 @@
-#ifndef LINALG_H
-#define LINALG_H
+#ifndef MATH_H
+#define MATH_H
 
 #include "typedefs.h"
-#include <math.h>
 
 typedef struct {
 	f32 x;
