@@ -1,4 +1,5 @@
 #include "arena.h"
+#include "base_math.h"
 #include "macros.h"
 #include "profile.h"
 #include "render/shader.h"
@@ -58,6 +59,10 @@ int main(void) {
 	shader_init(shader_arena, &s, v_path, f_path);
 	glUseProgram(s.id);
 
+	vector2f32 v = {2.4, 8.2};
+	f32 m = base_vec2f32_magnitude(v);
+	printf("magnitude of v is: %f\n", m);
+	return 0;
 	while(!spark_window_should_close(window)) {
 		begin_time_block("Game Loop");
 		spark_poll_events(window);
